@@ -1,6 +1,6 @@
 # Contributing Guidelines
 
-Thank you for contributing to the Mars Rover PROP- Blueprint.
+Thank you for contributing to the Mars Rover PROP-M Blueprint.
 
 This repository follows strict engineering discipline. Contributions are welcome - but must meet reproducibility, documentation, and validation standards.
 
