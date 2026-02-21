@@ -1,1 +1,105 @@
+name: CI (colcon)
 
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-colcon-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-22.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        ros_distro: [ humble ]   # LTS. Change to iron/jazzy if you standardize later.
+
+    env:
+      ROS_DISTRO: ${{ matrix.ros_distro }}
+      ROS_WS: rover_ws
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup ROS 2
+        uses: ros-tooling/setup-ros@v0.7
+        with:
+          required-ros-distributions: ${{ matrix.ros_distro }}
+
+      - name: Install system dependencies
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            python3-pip \
+            python3-rosdep \
+            python3-colcon-common-extensions \
+            python3-vcstool \
+            ros-${ROS_DISTRO}-ros-base \
+            ros-${ROS_DISTRO}-robot-localization \
+            ros-${ROS_DISTRO}-nav2-bringup \
+            ros-${ROS_DISTRO}-ros2-control \
+            ros-${ROS_DISTRO}-ros2-controllers \
+            ros-${ROS_DISTRO}-tf2-tools \
+            ros-${ROS_DISTRO}-diagnostic-updater
+
+      - name: Init rosdep
+        shell: bash
+        run: |
+          sudo rosdep init || true
+          rosdep update
+
+      - name: Resolve ROS dependencies (rosdep)
+        shell: bash
+        run: |
+          cd "${ROS_WS}"
+          rosdep install --from-paths src --ignore-src -r -y
+
+      - name: Cache colcon build (ccache)
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.ccache
+          key: ccache-${{ runner.os }}-${{ matrix.ros_distro }}-${{ github.sha }}
+          restore-keys: |
+            ccache-${{ runner.os }}-${{ matrix.ros_distro }}-
+
+      - name: Build
+        shell: bash
+        run: |
+          source /opt/ros/${ROS_DISTRO}/setup.bash
+          cd "${ROS_WS}"
+          colcon build --event-handlers console_direct+ --symlink-install
+
+      - name: Test
+        shell: bash
+        run: |
+          source /opt/ros/${ROS_DISTRO}/setup.bash
+          cd "${ROS_WS}"
+          source install/setup.bash
+          colcon test --event-handlers console_direct+ --return-code-on-test-failure
+
+      - name: Test Results
+        if: always()
+        shell: bash
+        run: |
+          source /opt/ros/${ROS_DISTRO}/setup.bash
+          cd "${ROS_WS}"
+          colcon test-result --verbose || true
+
+      - name: Upload test logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: colcon-test-logs-${{ matrix.ros_distro }}
+          path: |
+            rover_ws/log
+            rover_ws/build/**/Testing
+          if-no-files-found: ignore
