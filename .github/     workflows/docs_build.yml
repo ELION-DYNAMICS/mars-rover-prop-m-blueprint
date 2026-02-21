@@ -1,1 +1,60 @@
+name: Docs (build)
 
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "docs/**"
+      - "README.md"
+      - "mkdocs.yml"
+      - ".github/workflows/docs_build.yml"
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - "docs/**"
+      - "README.md"
+      - "mkdocs.yml"
+      - ".github/workflows/docs_build.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: docs-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install doc toolchain
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          pip install mkdocs mkdocs-material
+
+      - name: Validate docs structure
+        shell: bash
+        run: |
+          test -d docs
+          test -f README.md
+          # If you use MkDocs, mkdocs.yml should exist. If not, remove this line.
+          test -f mkdocs.yml
+
+      - name: Build docs (MkDocs)
+        shell: bash
+        run: |
+          mkdocs build --strict
+
+      - name: Upload site artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mkdocs-site
+          path: site
