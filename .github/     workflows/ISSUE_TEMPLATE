@@ -1,1 +1,277 @@
+config.yml
 
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://github.com/<Aluminium0>/<mars-rove-prop-m-blueprint>/main/docs
+    about: Read the docs before opening an issue.
+  - name: Security vulnerability report
+    url: https://github.com/<OWNER>/<REPO>/security/policy
+    about: Report security issues privately via the security policy.
+
+bug_report.yml
+
+name: Bug Report
+description: Report a defect with clear reproduction steps and evidence.
+title: "bug: <Report>"
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Provide evidence. If it can't be reproduced, it can't be fixed.
+
+  - type: input
+    id: version
+    attributes:
+      label: Version / Commit
+      description: Git commit hash or release tag.
+      placeholder: "e.g., a83f2c1 or v0.2.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Mode
+      options:
+        - Simulation (Gazebo)
+        - Simulation (Webots)
+        - Simulation (PyBullet)
+        - Hardware
+    validations:
+      required: true
+
+  - type: input
+    id: scenario
+    attributes:
+      label: Scenario
+      description: Scenario folder name, if applicable.
+      placeholder: "e.g., mars_flat"
+    validations:
+      required: false
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What happens instead. Include exact error output.
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction steps
+      description: Step-by-step commands to reproduce.
+      placeholder: |
+        1) ...
+        2) ...
+        3) ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / Evidence
+      description: Paste relevant logs, stack traces, screenshots, or MCAP run_id.
+      placeholder: |
+        - run_id: 20260218_153012_mars_flat_a83f2c1
+        - log excerpt:
+        - screenshots:
+    validations:
+      required: false
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, ROS 2 distro, simulator version, CPU/GPU if relevant.
+      placeholder: |
+        OS:
+        ROS 2:
+        Simulator:
+        Docker:
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-flight checks
+      options:
+        - label: I searched existing issues and this is not a duplicate.
+          required: true
+        - label: I can reproduce this on the latest main branch (or I listed the commit above).
+          required: false
+        - label: I attached a run_id / logs sufficient for reproduction.
+          required: false
+
+
+feature_request.yml
+
+name: Feature Request
+description: Propose a new capability with clear scope and acceptance criteria.
+title: "feat: <Proposal>"
+labels: ["enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Features must be testable. If it can't be verified, it doesn't ship.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem statement
+      description: What problem are we solving? Why now?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: High-level design. Include interfaces/topics if relevant.
+    validations:
+      required: true
+
+  - type: textarea
+    id: interfaces
+    attributes:
+      label: Interface impact (ICD)
+      description: New/changed topics, messages, frames, QoS, units, timestamps.
+      placeholder: |
+        - Topics:
+        - Messages:
+        - Frames:
+        - QoS:
+    validations:
+      required: false
+
+  - type: textarea
+    id: vnv
+    attributes:
+      label: Verification plan (V&V)
+      description: How will we prove this works?
+      placeholder: |
+        - Unit tests:
+        - Integration tests:
+        - Scenario/regression:
+        - Metrics + thresholds:
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Concrete pass/fail conditions.
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - P0 (critical)
+        - P1 (high)
+        - P2 (normal)
+        - P3 (low)
+    validations:
+      required: true
+
+
+task.yml
+
+name: Engineering Task
+description: A scoped unit of work with explicit deliverables.
+title: "task: <Task>"
+labels: ["task"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What will be delivered?
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: What is included and explicitly excluded?
+      placeholder: |
+        Included:
+        Excluded:
+    validations:
+      required: true
+
+  - type: textarea
+    id: deliverables
+    attributes:
+      label: Deliverables
+      description: Specific files/modules/tests expected.
+      placeholder: |
+        - [ ] docs/...
+        - [ ] rover_ws/src/...
+        - [ ] tests/...
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies / Blockers
+      description: What must exist first?
+    validations:
+      required: false
+
+  - type: textarea
+    id: vnv
+    attributes:
+      label: Verification
+      description: How is completion verified?
+      placeholder: |
+        - Command(s) to run:
+        - Expected output/metrics:
+    validations:
+      required: true
+
+
+question.yml
+
+name: Question
+description: Ask a question about usage, architecture, or design decisions.
+title: "question: <Questions>"
+labels: ["question"]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: Be specific. Include context.
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What have you tried? Link to docs/code if relevant.
+    validations:
+      required: false
