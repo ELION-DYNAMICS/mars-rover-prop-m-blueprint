@@ -6,4 +6,4 @@
 
 -Control hierarchy
 
--Simulation vs hardware mode differences
+-Simulation or hardware mode differences
