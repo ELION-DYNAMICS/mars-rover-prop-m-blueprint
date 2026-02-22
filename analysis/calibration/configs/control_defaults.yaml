@@ -1,1 +1,182 @@
+control:
+  meta:
+    version: 0.1
+    units: SI
+    notes: >
+      Control defaults are conservative and intended for simulation bring-up.
+      Promote to runtime configs only after calibration + V&V confirmation.
 
+  mode_profiles:
+    rover_v1:
+      enabled: true
+      description: "Modern mode baseline (Nav2 capable), conservative speeds."
+    rover_prop_m_mode:
+      enabled: true
+      description: "PROP-M emulation: low speed, stop-measure cycles, strict tether operations."
+
+  command_interface:
+    input_topic: /cmd_vel
+    safe_output_topic: /cmd_vel_safe
+    semantics:
+      linear_x_mps: "forward velocity command (m/s)"
+      angular_z_rps: "yaw rate command (rad/s)"
+    policy:
+      zero_other_twist_fields: true
+      deadband:
+        v_mps: 0.005
+        omega_rps: 0.01
+
+  limits:
+    # Global safety limits (applied before wheel conversion)
+    v_max_mps:
+      rover_v1: 0.20
+      rover_prop_m_mode: 0.05
+    omega_max_rps:
+      rover_v1: 0.60
+      rover_prop_m_mode: 0.30
+
+    # Acceleration limiting (command ramp)
+    a_max_mps2:
+      rover_v1: 0.15
+      rover_prop_m_mode: 0.05
+    alpha_max_rps2:
+      rover_v1: 0.80
+      rover_prop_m_mode: 0.30
+
+    # Wheel-space limits (enforced after inverse kinematics)
+    wheel_speed_max_rps:
+      rover_v1: 8.0
+      rover_prop_m_mode: 3.0
+
+    # Actuation limits (hardware placeholders until motor characterization)
+    torque_max_Nm:
+      rover_v1: 1.2
+      rover_prop_m_mode: 0.8
+    torque_rate_max_Nm_per_s:
+      rover_v1: 8.0
+      rover_prop_m_mode: 4.0
+
+  watchdog:
+    # If command stream stops -> safe stop
+    cmd_timeout_s: 0.5
+    on_timeout:
+      action: "stop"     # stop -> ramps to zero using accel limits
+      publish_fault: true
+      fault_code: "CMD_TIMEOUT"
+
+  arbitration:
+    # Higher priority wins -> then passed through safety shaping
+    sources_priority:
+      - name: emergency_stop
+        priority: 100
+      - name: contact_recovery
+        priority: 90
+      - name: safety_override
+        priority: 80
+      - name: nav2
+        priority: 50
+      - name: teleop
+        priority: 40
+      - name: scripted
+        priority: 30
+    behavior:
+      require_safe_mux: true
+      allow_direct_actuation: false
+
+  wheel_control:
+    loop_rate_hz:
+      rover_v1: 200
+      rover_prop_m_mode: 200
+
+    controller_type: "pid_velocity"  # baseline; upgrade to torque/current loop if hardware supports
+    anti_windup:
+      enabled: true
+      integrator_clamp: 0.5   # clamp on integral term (units depend on implementation)
+
+    pid_velocity:
+      # Conservative defaults; tune with step tests per wheel.
+      # ω_desired -> ω_measured -> torque command
+      left:
+        kp: 0.8
+        ki: 0.15
+        kd: 0.0
+      right:
+        kp: 0.8
+        ki: 0.15
+        kd: 0.0
+      derivative_filter_hz: 20.0
+
+    feedforward:
+      enabled: true
+      # Simple viscous + Coulomb feedforward proxy: τ_ff = k_v * ω + k_c * sign(ω)
+      k_v: 0.02     # Nm / (rad/s)
+      k_c: 0.05     # Nm
+
+  slip_containment:
+    enabled: true
+    slip_topic: /wheel/slip_estimate
+    policy:
+      # If slip exceeds threshold -> reduce commanded torque and optionally reduce v_cmd
+      s_threshold:
+        rover_v1: 0.30
+        rover_prop_m_mode: 0.20
+      s_hard_limit:
+        rover_v1: 0.60
+        rover_prop_m_mode: 0.40
+      torque_scale_alpha:
+        # τ_cmd -> τ_cmd * alpha when s > s_threshold
+        rover_v1: 0.6
+        rover_prop_m_mode: 0.5
+      speed_scale_gamma:
+        # v_cmd -> v_cmd * gamma when s > s_threshold (optional)
+        enabled: true
+        rover_v1: 0.8
+        rover_prop_m_mode: 0.7
+      hard_limit_action: "stop_and_recover"  # stop_and_recover | stop | degrade
+      slip_debounce_s: 0.10
+
+  contact_recovery:
+    enabled: true
+    contact_topics:
+      left: /contacts/left
+      right: /contacts/right
+      front: /contacts/front
+    trigger_policy:
+      debounce_s: 0.05
+      require_persistent: true
+    behavior:
+      # Contact -> immediate override
+      on_contact:
+        action: "reverse_then_turn_then_retry"
+        reverse_distance_m: 0.15
+        reverse_speed_mps: 0.03
+        turn_angle_rad: 0.35
+        turn_speed_rps: 0.25
+        max_retries: 3
+      on_exceed_retries:
+        action: "abort_segment"
+        fault_code: "CONTACT_RECOVERY_FAILED"
+
+  tether_constraint:
+    enabled:
+      rover_v1: false
+      rover_prop_m_mode: true
+    lander_frame: "lander"
+    reference_frame: "odom"
+    max_radius_m: 15.0
+    policy:
+      evaluate_rate_hz: 20
+      violation_action: "reject_goal_and_retreat"
+      retreat_margin_m: 0.5
+      publish_state_topic: /mission/state
+
+  logging:
+    publish_debug_topics: true
+    topics:
+      torque_command: /wheel/torque_command
+      wheel_velocity_error: /wheel/velocity_error
+      safety_state: /control/safety_state
+      slip_events: /control/slip_events
+    rate_limits_hz:
+      debug: 20
+      events: 50
