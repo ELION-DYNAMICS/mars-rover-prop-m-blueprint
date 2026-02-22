@@ -1,1 +1,182 @@
+estimation:
+  meta:
+    version: 0.1
+    units: SI
+    frame_policy: "REP-103 (x forward, y left, z up)"
+    notes: >
+      Defaults are conservative bring-up values. Promote to runtime configs only after
+      dataset-backed tuning and V&V confirmation. No 'looks good' tuning.
 
+  mode_profiles:
+    rover_v1:
+      enabled: true
+      description: "Modern mode baseline; supports Nav2 + optional SLAM."
+    rover_prop_m_mode:
+      enabled: true
+      description: "PROP-M emulation; odom-centric navigation, higher slip sensitivity."
+
+  frames:
+    map_frame: map
+    odom_frame: odom
+    base_frame: base_link
+    publish_tf: true
+    tf_publish_rate_hz: 50
+
+  timing:
+    # All stamps must represent acquisition time, not publish time.
+    use_sim_time: true
+    max_sensor_latency_s: 0.05
+    max_out_of_order_s: 0.02
+    # If dt is too large, filter should increase process noise / become conservative.
+    dt_guard:
+      enabled: true
+      dt_max_s: 0.05
+
+  state:
+    # EKF state definition used by this project:
+    # x = [X, Y, theta, v, omega]
+    representation: "planar_5d"
+    initial_state:
+      X_m: 0.0
+      Y_m: 0.0
+      theta_rad: 0.0
+      v_mps: 0.0
+      omega_rps: 0.0
+
+    initial_covariance:
+      # Diagonal P0 (reasonable non-zero uncertainty)
+      p_x_m2: 0.25          # 0.5 m std
+      p_y_m2: 0.25
+      p_theta_rad2: 0.0304  # ~10 deg std
+      p_v_m2ps2: 0.04       # 0.2 m/s std
+      p_omega_rad2ps2: 0.04 # 0.2 rad/s std
+
+  ekf:
+    update_rate_hz:
+      rover_v1: 50
+      rover_prop_m_mode: 50
+
+    process_model:
+      type: "differential_drive_planar"
+      integration: "rk2"   # euler | rk2 | rk4 (simulation can use rk4; runtime rk2 is fine)
+
+    process_noise:
+      # Q diagonal terms (baseline). Increase on dunes/high slip.
+      # Units:
+      #  X,Y -> m^2
+      #  theta -> rad^2
+      #  v -> (m/s)^2
+      #  omega -> (rad/s)^2
+      rover_v1:
+        q_x_m2: 0.0025
+        q_y_m2: 0.0025
+        q_theta_rad2: 0.0009
+        q_v_m2ps2: 0.02
+        q_omega_rad2ps2: 0.02
+      rover_prop_m_mode:
+        q_x_m2: 0.0040
+        q_y_m2: 0.0040
+        q_theta_rad2: 0.0016
+        q_v_m2ps2: 0.04
+        q_omega_rad2ps2: 0.03
+
+    # Optional constant bias terms can be added later.
+    bias_estimation:
+      enabled: false
+      notes: "Enable only after baseline stability. Bias state increases complexity."
+
+  measurements:
+    # Measurement channels. Keep minimal and robust first.
+    wheel_odometry:
+      enabled: true
+      topic: /wheel/odometry_raw
+      message_type: nav_msgs/Odometry
+      uses:
+        v_mps: true
+        omega_rps: false
+        pose: false
+      measurement_noise:
+        rover_v1:
+          r_v_m2ps2: 0.04     # 0.2 m/s std
+        rover_prop_m_mode:
+          r_v_m2ps2: 0.09     # more conservative due to slip regime
+
+    imu:
+      enabled: true
+      topic: /imu/data
+      message_type: sensor_msgs/Imu
+      uses:
+        yaw_rate_rps: true
+        linear_accel: false   # can be enabled later with careful bias handling
+      measurement_noise:
+        rover_v1:
+          r_omega_rad2ps2: 0.0025  # 0.05 rad/s std
+        rover_prop_m_mode:
+          r_omega_rad2ps2: 0.0036  # 0.06 rad/s std
+
+    # Optional modern mode additions (off by default)
+    visual_odometry:
+      enabled: false
+      topic: /vo/odometry
+      message_type: nav_msgs/Odometry
+
+    slam_pose:
+      enabled: false
+      topic: /slam/pose
+      message_type: geometry_msgs/PoseWithCovarianceStamped
+
+  slip_inflation:
+    enabled: true
+    slip_topic: /wheel/slip_estimate
+    policy:
+      # When slip rises, odometry is less trustworthy -> inflate Q and/or R.
+      s_threshold:
+        rover_v1: 0.20
+        rover_prop_m_mode: 0.15
+      s_hard_limit:
+        rover_v1: 0.60
+        rover_prop_m_mode: 0.40
+
+      # Inflation factors
+      beta_q_v:
+        rover_v1: 3.0
+        rover_prop_m_mode: 4.0
+      beta_q_xy:
+        rover_v1: 2.0
+        rover_prop_m_mode: 3.0
+      beta_r_wheel_v:
+        rover_v1: 2.0
+        rover_prop_m_mode: 3.0
+
+      debounce_s: 0.10
+      hard_limit_action: "degrade"  # degrade | stop_and_fault
+
+  innovation_gating:
+    enabled: true
+    # N-sigma gating for measurement residuals
+    gate_sigma:
+      wheel_v: 4.0
+      imu_omega: 5.0
+    on_reject:
+      action: "ignore_measurement"
+      publish_event: true
+      event_topic: /estimation/gating_events
+
+  sanity_checks:
+    enabled: true
+    checks:
+      covariance_psd: true
+      max_cov_trace: 1000.0
+      max_position_jump_m: 1.0
+      max_heading_jump_rad: 0.5
+    on_violation:
+      action: "inflate_covariance_and_flag"
+      fault_code: "ESTIMATION_SANITY_FAIL"
+      publish_fault_topic: /fault_state
+
+  outputs:
+    odom_topic: /odometry/filtered
+    diagnostics_topic: /diagnostics
+    publish_rate_hz: 50
+    # For evaluation only in sim; estimator must not consume this.
+    ground_truth_topic: /ground_truth/pose
