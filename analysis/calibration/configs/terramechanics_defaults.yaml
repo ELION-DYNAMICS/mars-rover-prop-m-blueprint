@@ -1,1 +1,105 @@
+terramechanics:
+  meta:
+    version: 0.1
+    units: SI
+    notes: >
+      Default terramechanics parameters are placeholders until calibrated.
+      Promote to runtime configs only after dataset-backed fitting (E01–E04)
+      and regression confirmation. No ad-hoc tuning.
 
+  wheel:
+    # Wheel geometry must match URDF.
+    radius_m: 0.05          # placeholder -> set to URDF truth
+    width_m: 0.02           # placeholder -> set to URDF truth
+    # Static normal load per wheel (used for initial sinkage guess).
+    # In simulation, prefer computed contact load if available.
+    nominal_load_N: 10.0    # placeholder
+
+  soil:
+    model: "bekker_wong"
+    assumptions:
+      rigid_wheel: true
+      homogeneous_soil: true
+      quasi_static: true
+      no_lateral_flow: true
+
+    bekker_pressure_sinkage:
+      # Bekker: p(z) = (kc / b + kphi) * z^n
+      kc_Pa_per_m_n1: 0.0        # cohesive modulus
+      kphi_Pa_per_m_n2: 0.0      # frictional modulus
+      n: 1.0                     # sinkage exponent (0.5–1.2 typical)
+      # Numerical solve configuration for sinkage z:
+      sinkage_solver:
+        method: "newton"
+        max_iter: 50
+        tol: 1.0e-6
+        z_min_m: 0.0
+        z_max_m: 0.10
+
+    wong_shear_stress:
+      # Wong: τ(j) = (c + σ tan(phi)) * (1 - exp(-j / K))
+      cohesion_c_Pa: 0.0
+      friction_phi_deg: 30.0     # store in degrees for readability
+      shear_deformation_K_m: 0.01
+      # Contact patch shear integration approximation
+      contact_patch:
+        method: "arc_length_approx"   # arc_length_approx | constant_patch
+        segments: 20                  # integration resolution
+        epsilon: 1.0e-6
+
+  slip:
+    # Slip ratio: s = (r*ω - v) / max(|r*ω|, ε)
+    epsilon: 1.0e-6
+    reporting:
+      publish_topic: /wheel/slip_estimate
+      publish_rate_hz: 50
+
+    regimes:
+      # Guidance thresholds (not hard limits). Used by control + evaluation.
+      low_slip_max: 0.10
+      nominal_slip_max: 0.25
+      high_slip_max: 0.40
+
+    saturation_model:
+      # Practical traction saturation approximation used when full integration is disabled:
+      enabled: true
+      # Fx ≈ A_contact * (c + σ tan(phi)) * (1 - exp(-s / s0))
+      s0: 0.20
+
+  rolling_resistance:
+    # Empirical rolling resistance term for deformable terrain.
+    enabled: true
+    # Simple model: F_rr ≈ k_rr * W * (z / r)
+    k_rr: 0.0                 # placeholder -> calibrated (E04 incline helps)
+    clamp:
+      F_rr_max_fraction_of_load: 0.30
+
+  implementation:
+    # How terramechanics interacts with simulators.
+    # - "observer_only": compute slip/traction estimates, do not modify physics
+    # - "force_injection": apply forces (PyBullet best suited)
+    # - "velocity_correction": adjust effective v based on slip (lightweight)
+    mode:
+      gazebo: "observer_only"
+      webots: "observer_only"
+      pybullet: "force_injection"
+
+    force_injection:
+      enabled: true
+      # Apply at contact point if available; otherwise apply at wheel link origin.
+      application_point: "contact_point"
+      max_force_N: 200.0
+
+    velocity_correction:
+      enabled: true
+      # v_actual = v_ideal * (1 - s_eff)
+      s_eff_clamp: 0.60
+
+  calibration_hooks:
+    # These fields are populated by calibration experiments.
+    source_experiments:
+      E01_straight_line_slip: null
+      E02_torque_ramp_traction: null
+      E03_sinkage_static: null
+      E04_incline_climb: null
+    dataset_refs: []
