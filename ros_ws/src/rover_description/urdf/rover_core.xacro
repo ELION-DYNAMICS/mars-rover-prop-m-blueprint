@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="rover_core" params="">
+
+    <!-- ===== Base Link ===== -->
+    <link name="base_link">
+      <visual>
+        <origin xyz="0 0 0.05" rpy="0 0 0"/>
+        <geometry><box size="0.30 0.22 0.10"/></geometry>
+        <material name="mat_gray"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0.05" rpy="0 0 0"/>
+        <geometry><box size="0.30 0.22 0.10"/></geometry>
+      </collision>
+
+      <!-- Placeholder inertial (replace with CAD-derived) -->
+      <xacro:inertial_box mass="8.0" x="0.30" y="0.22" z="0.10"/>
+    </link>
+
+    <!-- ===== Wheel params ===== -->
+    <xacro:property name="wheel_radius" value="0.05"/>
+    <xacro:property name="wheel_width"  value="0.02"/>
+    <xacro:property name="wheel_mass"   value="0.35"/>
+    <xacro:property name="wheel_x"      value="0.12"/>
+    <xacro:property name="wheel_y"      value="0.12"/>
+    <xacro:property name="wheel_z"      value="0.05"/>
+
+    <!-- ===== Left wheel ===== -->
+    <link name="wheel_left_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="1.57079632679 0 0"/>
+        <geometry><cylinder radius="${wheel_radius}" length="${wheel_width}"/></geometry>
+        <material name="mat_black"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="1.57079632679 0 0"/>
+        <geometry><cylinder radius="${wheel_radius}" length="${wheel_width}"/></geometry>
+      </collision>
+      <xacro:inertial_cylinder_z mass="${wheel_mass}" radius="${wheel_radius}" length="${wheel_width}"/>
+    </link>
+
+    <joint name="wheel_left_joint" type="continuous">
+      <parent link="base_link"/>
+      <child link="wheel_left_link"/>
+      <origin xyz="${wheel_x} ${wheel_y} ${wheel_z}" rpy="0 0 0"/>
+      <!-- Wheel rotates about Y for a forward-facing wheel if cylinder axis is along X;
+           here we oriented the cylinder via rpy so rotation axis is Y -->
+      <axis xyz="0 1 0"/>
+      <limit effort="2.0" velocity="20.0"/>
+      <dynamics damping="0.0" friction="0.0"/>
+    </joint>
+
+    <!-- ===== Right wheel ===== -->
+    <link name="wheel_right_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="1.57079632679 0 0"/>
+        <geometry><cylinder radius="${wheel_radius}" length="${wheel_width}"/></geometry>
+        <material name="mat_black"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="1.57079632679 0 0"/>
+        <geometry><cylinder radius="${wheel_radius}" length="${wheel_width}"/></geometry>
+      </collision>
+      <xacro:inertial_cylinder_z mass="${wheel_mass}" radius="${wheel_radius}" length="${wheel_width}"/>
+    </link>
+
+    <joint name="wheel_right_joint" type="continuous">
+      <parent link="base_link"/>
+      <child link="wheel_right_link"/>
+      <origin xyz="${wheel_x} ${-wheel_y} ${wheel_z}" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <limit effort="2.0" velocity="20.0"/>
+      <dynamics damping="0.0" friction="0.0"/>
+    </joint>
+
+  </xacro:macro>
+
+</robot>
