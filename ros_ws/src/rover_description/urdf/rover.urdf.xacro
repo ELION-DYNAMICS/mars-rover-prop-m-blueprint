@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="rover">
+
+  <!-- ========= Arguments ========= -->
+  <xacro:arg name="use_sim" default="true"/>
+  <xacro:arg name="use_ros2_control" default="true"/>
+
+  <!-- ========= Includes ========= -->
+  <xacro:include filename="$(find rover_description)/urdf/rover_materials.xacro"/>
+  <xacro:include filename="$(find rover_description)/urdf/rover_inertials.xacro"/>
+  <xacro:include filename="$(find rover_description)/urdf/rover_core.xacro"/>
+  <xacro:include filename="$(find rover_description)/urdf/rover_transmissions.xacro"/>
+  <xacro:include filename="$(find rover_description)/urdf/rover_gazebo.xacro"/>
+
+  <!-- ========= Build robot ========= -->
+  <xacro:rover_core/>
+
+  <!-- ros2_control hardware/transmissions -->
+  <xacro:if value="$(arg use_ros2_control)">
+    <xacro:rover_ros2_control/>
+  </xacro:if>
+
+  <!-- simulator-specific plugins/tags -->
+  <xacro:if value="$(arg use_sim)">
+    <xacro:rover_sim_extensions/>
+  </xacro:if>
+
+</robot>
