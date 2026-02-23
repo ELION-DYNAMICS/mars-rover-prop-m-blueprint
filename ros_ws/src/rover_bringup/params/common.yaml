@@ -1,0 +1,11 @@
+/**:
+  ros__parameters:
+    use_sim_time: true
+
+    frames:
+      map: map
+      odom: odom
+      base: base_link
+
+    logging:
+      enable_debug_topics: true
