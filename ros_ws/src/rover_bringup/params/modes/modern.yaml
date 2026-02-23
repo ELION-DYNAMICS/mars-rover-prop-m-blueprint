@@ -1,0 +1,10 @@
+/**:
+  ros__parameters:
+    mode: modern
+
+    safety:
+      tether_enabled: false
+
+    limits:
+      v_max_mps: 0.20
+      omega_max_rps: 0.60
