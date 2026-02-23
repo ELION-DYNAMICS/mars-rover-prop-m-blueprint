@@ -1,0 +1,11 @@
+/**:
+  ros__parameters:
+    mode: prop_m
+
+    safety:
+      tether_enabled: true
+      max_tether_radius_m: 15.0
+
+    limits:
+      v_max_mps: 0.05
+      omega_max_rps: 0.30
