@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>rover_drivers</name>
+  <version>0.1.0</version>
+  <description>Meta-package for rover hardware drivers.</description>
+
+  <maintainer email="unknown@example.com">Maintainer</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- Group driver packages -->
+  <exec_depend>rover_driver_base</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+    <metapackage/>
+  </export>
+</package>
