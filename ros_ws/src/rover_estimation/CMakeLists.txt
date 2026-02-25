@@ -1,0 +1,18 @@
+cmake_minimum_required(VERSION 3.8)
+project(rover_estimation)
+
+find_package(ament_cmake REQUIRED)
+
+install(DIRECTORY
+  config
+  launch
+  resource
+  DESTINATION share/${PROJECT_NAME}
+)
+
+install(FILES
+  README.md
+  DESTINATION share/${PROJECT_NAME}
+)
+
+ament_package()
