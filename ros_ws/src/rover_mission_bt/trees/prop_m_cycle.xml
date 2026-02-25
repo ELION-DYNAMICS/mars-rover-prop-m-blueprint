@@ -1,0 +1,53 @@
+<root main_tree_to_execute="PropMCycle">
+  <BehaviorTree ID="PropMCycle">
+    <Sequence name="PropM">
+
+      <SetBlackboard key="drive_timeout_s" value="30"/>
+      <SetBlackboard key="measure_duration_s" value="8"/>
+      <SetBlackboard key="transmit_timeout_s" value="15"/>
+      <SetBlackboard key="max_retries" value="2"/>
+
+      <SubTree ID="MissionCycle"/>
+    </Sequence>
+  </BehaviorTree>
+
+  <!-- Reuse the same core tree -->
+  <BehaviorTree ID="MissionCycle">
+    <Sequence name="Cycle">
+      <Sequence name="DrivePhase">
+        <SetBlackboard key="mission_phase" value="DRIVE"/>
+        <Timeout msec="{drive_timeout_s}000">
+          <Action ID="DriveToGoal"/>
+        </Timeout>
+      </Sequence>
+
+      <Sequence name="MeasurePhase">
+        <SetBlackboard key="mission_phase" value="STOP_MEASURE"/>
+        <Action ID="StopMotion"/>
+        <Timeout msec="{measure_duration_s}000">
+          <Action ID="AcquireMeasurements"/>
+        </Timeout>
+      </Sequence>
+
+      <Sequence name="TransmitPhase">
+        <SetBlackboard key="mission_phase" value="TRANSMIT_LOG"/>
+        <RetryUntilSuccessful num_attempts="{max_retries}">
+          <Timeout msec="{transmit_timeout_s}000">
+            <Action ID="TransmitAndLog"/>
+          </Timeout>
+        </RetryUntilSuccessful>
+      </Sequence>
+
+      <Selector name="LoopDecision">
+        <Sequence name="EndIfGoalReached">
+          <Condition ID="GoalReached"/>
+          <SetBlackboard key="mission_phase" value="DONE"/>
+        </Sequence>
+        <Sequence name="Repeat">
+          <SetBlackboard key="mission_phase" value="REPEAT"/>
+          <Action ID="SelectNextGoal"/>
+        </Sequence>
+      </Selector>
+    </Sequence>
+  </BehaviorTree>
+</root>
