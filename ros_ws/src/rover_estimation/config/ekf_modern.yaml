@@ -1,0 +1,68 @@
+ekf_filter_node:
+  ros__parameters:
+    use_sim_time: true
+    frequency: 50.0
+    sensor_timeout: 0.1
+    two_d_mode: true
+
+    # Frames
+    map_frame: map
+    odom_frame: odom
+    base_link_frame: base_link
+    world_frame: odom
+
+    publish_tf: true
+    publish_acceleration: false
+
+    # Output topic
+    odometry_topic: /odometry/filtered
+
+    # -------------------------
+    # Wheel Odometry
+    # -------------------------
+    odom0: /wheel/odometry_raw
+    odom0_config: [
+      false, false, false,   # x y z position
+      false, false, false,   # roll pitch yaw
+      true,  false, false,   # x y z velocity  (v_x)
+      false, false, true,    # roll pitch yaw rate (yaw rate optional; set true only if valid)
+      false, false, false    # x y z accel
+    ]
+    odom0_queue_size: 10
+    odom0_differential: false
+    odom0_relative: false
+
+    # Conservative baseline covariances (tuned later via calibration)
+    process_noise_covariance: [
+      0.0025, 0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,
+      0,      0.0025, 0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,
+      0,      0,      0.01,   0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,
+      0,      0,      0,      0.03,   0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,
+      0,      0,      0,      0,      0.03,   0,      0,      0,      0,      0,      0,      0,      0,      0,      0,
+      0,      0,      0,      0,      0,      0.03,   0,      0,      0,      0,      0,      0,      0,      0,      0,
+      0,      0,      0,      0,      0,      0,      0.02,   0,      0,      0,      0,      0,      0,      0,      0,
+      0,      0,      0,      0,      0,      0,      0,      0.02,   0,      0,      0,      0,      0,      0,      0,
+      0,      0,      0,      0,      0,      0,      0,      0,      0.02,   0,      0,      0,      0,      0,      0,
+      0,      0,      0,      0,      0,      0,      0,      0,      0,      0.02,   0,      0,      0,      0,      0,
+      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0.02,   0,      0,      0,      0,
+      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0.02,   0,      0,      0,
+      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0.02,   0,      0,
+      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0.02,   0,
+      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0.02
+    ]
+
+    # -------------------------
+    # IMU (yaw rate only)
+    # -------------------------
+    imu0: /imu/data
+    imu0_config: [
+      false, false, false,   # position
+      false, false, false,   # orientation (ignored)
+      false, false, false,   # linear velocity
+      false, false, true,    # angular velocity (yaw rate)
+      false, false, false    # linear acceleration
+    ]
+    imu0_queue_size: 20
+    imu0_differential: false
+    imu0_relative: false
+    imu0_remove_gravitational_acceleration: false
