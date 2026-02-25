@@ -1,0 +1,56 @@
+<root main_tree_to_execute="MissionCycle">
+  <BehaviorTree ID="MissionCycle">
+
+    <!-- Blackboard keys (inputs) -->
+    <!--
+      goal_reached: bool
+      drive_timeout_s: float
+      measure_duration_s: float
+      transmit_timeout_s: float
+      max_retries: int
+    -->
+
+    <Sequence name="Cycle">
+
+      <!-- 1) Drive -->
+      <Sequence name="DrivePhase">
+        <SetBlackboard key="mission_phase" value="DRIVE"/>
+        <Timeout msec="{drive_timeout_s}000">
+          <Action ID="DriveToGoal"/>
+        </Timeout>
+      </Sequence>
+
+      <!-- 2) Stop + Measure -->
+      <Sequence name="MeasurePhase">
+        <SetBlackboard key="mission_phase" value="STOP_MEASURE"/>
+        <Action ID="StopMotion"/>
+        <Timeout msec="{measure_duration_s}000">
+          <Action ID="AcquireMeasurements"/>
+        </Timeout>
+      </Sequence>
+
+      <!-- 3) Transmit + Log -->
+      <Sequence name="TransmitPhase">
+        <SetBlackboard key="mission_phase" value="TRANSMIT_LOG"/>
+        <RetryUntilSuccessful num_attempts="{max_retries}">
+          <Timeout msec="{transmit_timeout_s}000">
+            <Action ID="TransmitAndLog"/>
+          </Timeout>
+        </RetryUntilSuccessful>
+      </Sequence>
+
+      <!-- 4) Decide loop -->
+      <Selector name="LoopDecision">
+        <Sequence name="EndIfGoalReached">
+          <Condition ID="GoalReached"/>
+          <SetBlackboard key="mission_phase" value="DONE"/>
+        </Sequence>
+        <Sequence name="Repeat">
+          <SetBlackboard key="mission_phase" value="REPEAT"/>
+          <Action ID="SelectNextGoal"/>
+        </Sequence>
+      </Selector>
+
+    </Sequence>
+  </BehaviorTree>
+</root>
