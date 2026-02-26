@@ -1,0 +1,18 @@
+sensors:
+  imu:
+    enabled: true
+    topic: /imu/data
+    rate_hz: 100.0
+    gyro_noise_std_rps: 0.002
+    accel_noise_std_mps2: 0.03
+
+  lidar_2d:
+    enabled: true
+    topic: /scan
+    rate_hz: 10.0
+    range_min_m: 0.12
+    range_max_m: 20.0
+    noise_std_m: 0.01
+
+  cameras:
+    enabled: false
