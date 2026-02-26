@@ -1,0 +1,13 @@
+topics:
+  - /tf
+  - /tf_static
+  - /joint_states
+  - /imu/data
+  - /scan
+  - /cmd_vel
+  - /cmd_vel_safe
+  - /driver/motor_cmd_vel
+  - /odometry/filtered
+  - /wheel/odometry_raw
+  - /mission/state
+  - /diagnostics
