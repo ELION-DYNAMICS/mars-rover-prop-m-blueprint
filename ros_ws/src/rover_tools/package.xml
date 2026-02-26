@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>rover_tools</name>
+  <version>0.1.0</version>
+  <description>Operations tooling: bag recording/export, metrics evaluation, dataset packaging.</description>
+
+  <maintainer email="unknown@example.com">Maintainer</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_python</buildtool_depend>
+
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>ament_index_python</exec_depend>
+
+  <!-- We call ros2 CLI processes (bag record/convert) -->
+  <exec_depend>rosbag2</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
