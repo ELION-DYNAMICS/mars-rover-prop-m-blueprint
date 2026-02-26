@@ -1,0 +1,25 @@
+presets:
+  regolith_nominal:
+    description: "Baseline loose regolith approximation for early bring-up."
+    mu_static: 0.70
+    mu_dynamic: 0.60
+    restitution: 0.05
+    # Compliance placeholders for engines that support it
+    kp: 1.0e6
+    kd: 1.0e3
+
+  regolith_loose:
+    description: "Lower friction, higher sink tendency. Used for slip stress-testing."
+    mu_static: 0.55
+    mu_dynamic: 0.45
+    restitution: 0.03
+    kp: 7.0e5
+    kd: 8.0e2
+
+  bedrock_hard:
+    description: "High traction, minimal sink. Used for control debugging."
+    mu_static: 0.95
+    mu_dynamic: 0.85
+    restitution: 0.10
+    kp: 2.0e6
+    kd: 2.0e3
