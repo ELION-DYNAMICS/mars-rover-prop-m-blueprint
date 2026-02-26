@@ -1,9 +1,9 @@
 # ROS Workspace (ros_ws)
 
-This workspace contains the flight software stack for the **Mars Rover Prop-M Blueprint** program.
+This workspace contains the flight software stack for the Mars Rover Prop-M Blueprint program.
 
 The intent is not to “run a rover in sim.”  
-The intent is to build a rover software system that is **testable, calibratable, traceable**, and eventually **portable from simulation to hardware** without rewriting core logic.
+The intent is to build a rover software system that is testable, calibratable, traceable, and eventually portable from simulation to hardware without rewriting core logic.
 
 ---
 
@@ -11,12 +11,12 @@ The intent is to build a rover software system that is **testable, calibratable,
 
 At a high level, the system is organized as:
 
-**Perception/Drivers** → **State Estimation** → **Navigation & Autonomy** → **Command Shaping (Safety)** → **Actuation** → **Logging/Datasets**
+**Perception/Drivers** -> **State Estimation** -> **Navigation & Autonomy** -> **Command Shaping (Safety)** -> **Actuation** -> **Logging/Datasets**
 
 Key boundary contracts:
 
 - **Navigation publishes**: `/cmd_vel`
-- **Control shapes**: `/cmd_vel` → `/cmd_vel_safe` (limits, ramping, watchdog, slip containment)
+- **Control shapes**: `/cmd_vel` -> `/cmd_vel_safe` (limits, ramping, watchdog, slip containment)
 - **Driver layer consumes**: `/cmd_vel_safe` and interfaces to sim/hardware actuators
 - **Dataset tooling records** topics and packages immutable runs under `/datasets/`
 
