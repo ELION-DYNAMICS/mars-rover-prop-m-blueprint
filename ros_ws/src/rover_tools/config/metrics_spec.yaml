@@ -1,0 +1,9 @@
+metrics:
+  slip:
+    enabled: true
+    topic_cmd: /cmd_vel_safe
+    topic_odom: /odometry/filtered
+
+  mission:
+    enabled: true
+    topic_state: /mission/state
