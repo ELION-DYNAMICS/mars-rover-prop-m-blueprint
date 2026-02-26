@@ -1,0 +1,14 @@
+controller_server:
+  ros__parameters:
+    controller_frequency: 20.0
+    controller_plugins: ["FollowPath"]
+
+    FollowPath:
+      plugin: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
+      desired_linear_vel: 0.15
+      lookahead_dist: 0.5
+      min_lookahead_dist: 0.2
+      max_lookahead_dist: 1.0
+      use_velocity_scaled_lookahead_dist: true
+      rotate_to_heading_angular_vel: 0.6
+      transform_tolerance: 0.2
