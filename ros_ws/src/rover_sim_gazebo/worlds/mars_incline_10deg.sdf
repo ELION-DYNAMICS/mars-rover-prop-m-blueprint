@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+  <world name="mars_incline_10deg">
+
+    <physics type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+
+    <gravity>0 0 -3.711</gravity>
+
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    <!-- Inclined plane implemented by rotating the terrain model -->
+    <include>
+      <uri>model://regolith_flat</uri>
+      <name>terrain</name>
+      <pose>0 0 0 0.1745329252 0 0</pose> <!-- 10 deg about X -->
+    </include>
+
+    <plugin name="terrain_preset" filename="libterrain_preset_plugin.so">
+      <preset>regolith_nominal</preset>
+      <target_model>terrain</target_model>
+      <target_link>ground</target_link>
+    </plugin>
+
+  </world>
+</sdf>
