@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+  <model name="regolith_dune_patch">
+    <static>true</static>
+    <link name="ground">
+      <collision name="collision">
+        <geometry>
+          <plane>
+            <normal>0 0 1</normal>
+            <size>80 80</size>
+          </plane>
+        </geometry>
+      </collision>
+
+      <visual name="visual">
+        <geometry>
+          <plane>
+            <normal>0 0 1</normal>
+            <size>80 80</size>
+          </plane>
+        </geometry>
+        <material>
+          <ambient>0.62 0.48 0.33 1</ambient>
+          <diffuse>0.62 0.48 0.33 1</diffuse>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>
