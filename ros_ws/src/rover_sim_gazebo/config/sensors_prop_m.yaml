@@ -1,0 +1,13 @@
+sensors:
+  imu:
+    enabled: true
+    topic: /imu/data
+    rate_hz: 50.0
+    gyro_noise_std_rps: 0.001
+    accel_noise_std_mps2: 0.02
+
+  lidar_2d:
+    enabled: false
+
+  cameras:
+    enabled: false
