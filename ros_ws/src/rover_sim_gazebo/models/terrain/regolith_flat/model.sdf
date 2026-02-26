@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+  <model name="regolith_flat">
+    <static>true</static>
+    <link name="ground">
+      <collision name="collision">
+        <geometry>
+          <plane>
+            <normal>0 0 1</normal>
+            <size>200 200</size>
+          </plane>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.7</mu>
+              <mu2>0.7</mu2>
+            </ode>
+          </friction>
+          <bounce>
+            <restitution_coefficient>0.05</restitution_coefficient>
+          </bounce>
+        </surface>
+      </collision>
+
+      <visual name="visual">
+        <geometry>
+          <plane>
+            <normal>0 0 1</normal>
+            <size>200 200</size>
+          </plane>
+        </geometry>
+        <material>
+          <ambient>0.60 0.45 0.30 1</ambient>
+          <diffuse>0.60 0.45 0.30 1</diffuse>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>
