@@ -1,0 +1,9 @@
+topics:
+  - /tf
+  - /tf_static
+  - /joint_states
+  - /imu/data
+  - /cmd_vel
+  - /cmd_vel_safe
+  - /odometry/filtered
+  - /mission/state
