@@ -1,0 +1,36 @@
+{
+  "name": "mars-rover-prop-m",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "."
+  },
+  "runArgs": [
+    "--privileged",
+    "--net=host",
+    "--ipc=host",
+    "--env=DISPLAY",
+    "--volume=/tmp/.X11-unix:/tmp/.X11-unix"
+  ],
+  "containerEnv": {
+    "ROS_DOMAIN_ID": "42",
+    "RCUTILS_COLORIZED_OUTPUT": "1"
+  },
+  "remoteUser": "ros",
+  "workspaceFolder": "/workspaces/mars-rover-prop-m-blueprint",
+  "postCreateCommand": "bash infrastructure/devcontainer/post_create.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-iot.vscode-ros",
+        "ms-python.python",
+        "ms-vscode.cpptools",
+        "ms-azuretools.vscode-docker",
+        "eamodio.gitlens"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "python.defaultInterpreterPath": "/usr/bin/python3"
+      }
+    }
+  }
+}
