@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+  <world name="lander_tether_site">
+
+    <physics type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+
+    <gravity>0 0 -3.711</gravity>
+
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    <include>
+      <uri>model://regolith_flat</uri>
+      <name>terrain</name>
+      <pose>0 0 0 0 0 0</pose>
+    </include>
+
+    <!-- Apply deterministic terrain preset -->
+    <plugin name="terrain_preset" filename="libterrain_preset_plugin.so">
+      <preset>regolith_nominal</preset>
+      <target_model>terrain</target_model>
+      <target_link>ground</target_link>
+    </plugin>
+
+    <!-- Lander: static test article (simple cylinder + box) -->
+    <model name="lander">
+      <static>true</static>
+      <pose>0 0 0 0 0 0</pose>
+      <link name="body">
+        <collision name="collision">
+          <geometry>
+            <cylinder>
+              <radius>0.75</radius>
+              <length>1.2</length>
+            </cylinder>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>0.75</radius>
+              <length>1.2</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.35 0.35 0.38 1</ambient>
+            <diffuse>0.35 0.35 0.38 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Visual-only tether corridor marker (does NOT enforce physics) -->
+    <model name="tether_marker">
+      <static>true</static>
+      <pose>3.2 0 0.02 0 0 0</pose>
+      <link name="marker">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>6.0 0.6 0.02</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.9 0.2 0.2 0.4</ambient>
+            <diffuse>0.9 0.2 0.2 0.4</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+  </world>
+</sdf>
