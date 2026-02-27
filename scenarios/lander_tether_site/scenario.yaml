@@ -1,0 +1,56 @@
+name: lander_tether_site
+version: "0.1"
+description: >
+  Rover operations near a stationary lander with tether hazard modeled as keep-out zones.
+
+defaults:
+  mode: modern            # modern | prop_m
+  backend: gazebo         # gazebo | webots | pybullet | hardware
+  map: map/map.yaml
+  world_gazebo: worlds/gazebo/lander_tether_site.sdf
+
+geometry:
+  lander_pose_map: [0.0, 0.0, 0.0]   # x[m], y[m], yaw[rad]
+
+zones:
+  keepout_lander:
+    type: circle
+    center_xy_m: [0.0, 0.0]
+    radius_m: 2.0
+    cost: 255
+
+  tether_corridor:
+    type: polygon
+    # Conservative 2D corridor; refine when tether behavior is modeled
+    vertices_xy_m:
+      - [0.4,  0.2]
+      - [6.0,  1.0]
+      - [6.2, -1.0]
+      - [0.4, -0.2]
+    cost: 255
+
+waypoints:
+  science_1: [8.0,  1.5, 0.0]   # x, y, yaw
+  science_2: [10.0, -1.0, 0.0]
+  safe_hold: [4.0,  0.0, 0.0]
+
+mission:
+  cycle:
+    stop_measure_duration_s:
+      modern: 3.0
+      prop_m: 8.0
+    transmit_duration_s:
+      modern: 4.0
+      prop_m: 6.0
+    drive_timeout_s:
+      modern: 120.0
+      prop_m: 30.0
+
+nav2:
+  global_costmap:
+    resolution_m: 0.10
+  local_costmap:
+    resolution_m: 0.05
+  inflation_radius_m:
+    modern: 0.55
+    prop_m: 0.65
