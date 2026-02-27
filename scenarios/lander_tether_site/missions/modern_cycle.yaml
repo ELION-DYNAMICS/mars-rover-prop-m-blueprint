@@ -1,0 +1,5 @@
+mode: modern
+tree: modern_cycle.xml
+drive_duration_s: 20.0
+measure_duration_s: 3.0
+transmit_duration_s: 4.0
