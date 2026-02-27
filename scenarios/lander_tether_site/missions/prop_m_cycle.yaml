@@ -1,0 +1,5 @@
+mode: prop_m
+tree: prop_m_cycle.xml
+drive_duration_s: 8.0
+measure_duration_s: 8.0
+transmit_duration_s: 6.0
