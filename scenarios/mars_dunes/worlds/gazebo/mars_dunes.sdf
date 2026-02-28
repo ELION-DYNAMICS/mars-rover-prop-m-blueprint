@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+  <world name="mars_dunes">
+
+    <physics type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+
+    <gravity>0 0 -3.711</gravity>
+
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    <include>
+      <uri>model://regolith_dune_patch</uri>
+      <name>terrain</name>
+      <pose>0 0 0 0 0 0</pose>
+    </include>
+
+    <plugin name="terrain_preset" filename="libterrain_preset_plugin.so">
+      <preset>regolith_loose</preset>
+      <target_model>terrain</target_model>
+      <target_link>ground</target_link>
+    </plugin>
+
+    <!-- Optional visual marker: nominal traverse corridor -->
+    <model name="traverse_marker">
+      <static>true</static>
+      <pose>3 0 0.02 0 0 0</pose>
+      <link name="marker">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>24.0 1.0 0.02</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.2 0.6 0.9 0.25</ambient>
+            <diffuse>0.2 0.6 0.9 0.25</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+  </world>
+</sdf>
