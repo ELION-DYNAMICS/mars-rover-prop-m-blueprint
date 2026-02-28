@@ -1,0 +1,57 @@
+name: mars_rocks
+version: "0.1"
+description: >
+  Obstacle-field scenario with static rock hazards for validating costmaps, planners, controllers, and recoveries.
+
+defaults:
+  mode: modern
+  backend: gazebo
+  map: map/map.yaml
+  world_gazebo: worlds/gazebo/mars_rocks.sdf
+
+environment:
+  gravity_mps2: 3.711
+  terrain_preset:
+    modern: regolith_nominal
+    prop_m: regolith_nominal
+
+initial_conditions:
+  spawn_pose_map: [-8.0, 0.0, 0.0]
+  seed: 2026
+
+mission:
+  cycle:
+    stop_measure_duration_s:
+      modern: 3.0
+      prop_m: 8.0
+    transmit_duration_s:
+      modern: 4.0
+      prop_m: 6.0
+    drive_timeout_s:
+      modern: 180.0
+      prop_m: 45.0
+
+waypoints:
+  gate_entry: [-2.0,  0.0, 0.0]
+  gate_exit:  [ 6.0,  0.0, 0.0]
+  science_1:   [ 9.0,  1.0, 0.0]
+  safe_hold:  [-4.0,  0.0, 0.0]
+
+nav2:
+  inflation_radius_m:
+    modern: 0.60
+    prop_m: 0.75
+  local_costmap:
+    width_m:
+      modern: 8.0
+      prop_m: 6.0
+    height_m:
+      modern: 8.0
+      prop_m: 6.0
+
+obstacles:
+  rock_field_version: "RF-001"
+  corridor_width_m: 3.0
+  min_clearance_m:
+    modern: 0.35
+    prop_m: 0.45
