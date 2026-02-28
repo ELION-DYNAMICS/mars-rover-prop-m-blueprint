@@ -1,0 +1,51 @@
+name: mars_flat
+version: "0.1"
+description: >
+  Baseline flat terrain scenario with nominal traction.
+  Used for regression, wiring validation, and dataset sanity checks.
+
+defaults:
+  mode: modern
+  backend: gazebo
+  map: map/map.yaml
+  world_gazebo: worlds/gazebo/mars_flat.sdf
+
+environment:
+  gravity_mps2: 3.711
+  terrain_preset:
+    modern: regolith_nominal
+    prop_m: regolith_nominal
+
+initial_conditions:
+  spawn_pose_map: [-5.0, 0.0, 0.0]
+  seed: 0
+
+mission:
+  cycle:
+    stop_measure_duration_s:
+      modern: 3.0
+      prop_m: 8.0
+    transmit_duration_s:
+      modern: 4.0
+      prop_m: 6.0
+    drive_timeout_s:
+      modern: 120.0
+      prop_m: 30.0
+
+waypoints:
+  traverse_1: [0.0,  0.0, 0.0]
+  traverse_2: [5.0,  0.0, 0.0]
+  traverse_3: [10.0, 0.0, 0.0]
+  safe_hold:  [-2.0, 0.0, 0.0]
+
+nav2:
+  inflation_radius_m:
+    modern: 0.50
+    prop_m: 0.60
+  local_costmap:
+    width_m:
+      modern: 6.0
+      prop_m: 4.0
+    height_m:
+      modern: 6.0
+      prop_m: 4.0
