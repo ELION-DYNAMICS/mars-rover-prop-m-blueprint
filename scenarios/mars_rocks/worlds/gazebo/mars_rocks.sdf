@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+  <world name="mars_rocks">
+
+    <physics type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+
+    <gravity>0 0 -3.711</gravity>
+
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    <include>
+      <uri>model://regolith_flat</uri>
+      <name>terrain</name>
+      <pose>0 0 0 0 0 0</pose>
+    </include>
+
+    <plugin name="terrain_preset" filename="libterrain_preset_plugin.so">
+      <preset>regolith_nominal</preset>
+      <target_model>terrain</target_model>
+      <target_link>ground</target_link>
+    </plugin>
+
+    <!-- Rock field RF-001: corridor hazards -->
+    <!-- Left boundary rocks -->
+    <model name="rock_L1">
+      <static>true</static>
+      <pose>-1.0  1.6 0.20 0 0 0</pose>
+      <link name="link">
+        <collision name="c">
+          <geometry><sphere><radius>0.22</radius></sphere></geometry>
+        </collision>
+        <visual name="v">
+          <geometry><sphere><radius>0.22</radius></sphere></geometry>
+          <material><ambient>0.35 0.28 0.22 1</ambient><diffuse>0.35 0.28 0.22 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="rock_L2">
+      <static>true</static>
+      <pose>1.5  1.7 0.18 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><sphere><radius>0.20</radius></sphere></geometry></collision>
+        <visual name="v"><geometry><sphere><radius>0.20</radius></sphere></geometry></visual>
+      </link>
+    </model>
+
+    <model name="rock_L3">
+      <static>true</static>
+      <pose>4.0  1.5 0.22 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><sphere><radius>0.24</radius></sphere></geometry></collision>
+        <visual name="v"><geometry><sphere><radius>0.24</radius></sphere></geometry></visual>
+      </link>
+    </model>
+
+    <!-- Right boundary rocks -->
+    <model name="rock_R1">
+      <static>true</static>
+      <pose>-0.5 -1.6 0.20 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><sphere><radius>0.22</radius></sphere></geometry></collision>
+        <visual name="v"><geometry><sphere><radius>0.22</radius></sphere></geometry></visual>
+      </link>
+    </model>
+
+    <model name="rock_R2">
+      <static>true</static>
+      <pose>2.2 -1.7 0.19 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><sphere><radius>0.21</radius></sphere></geometry></collision>
+        <visual name="v"><geometry><sphere><radius>0.21</radius></sphere></geometry></visual>
+      </link>
+    </model>
+
+    <model name="rock_R3">
+      <static>true</static>
+      <pose>5.2 -1.5 0.23 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><sphere><radius>0.24</radius></sphere></geometry></collision>
+        <visual name="v"><geometry><sphere><radius>0.24</radius></sphere></geometry></visual>
+      </link>
+    </model>
+
+    <!-- Mid-field "decision" rocks to force planning -->
+    <model name="rock_M1">
+      <static>true</static>
+      <pose>2.8  0.4 0.20 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><sphere><radius>0.20</radius></sphere></geometry></collision>
+        <visual name="v"><geometry><sphere><radius>0.20</radius></sphere></geometry></visual>
+      </link>
+    </model>
+
+    <model name="rock_M2">
+      <static>true</static>
+      <pose>3.4 -0.5 0.18 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><sphere><radius>0.18</radius></sphere></geometry></collision>
+        <visual name="v"><geometry><sphere><radius>0.18</radius></sphere></geometry></visual>
+      </link>
+    </model>
+
+  </world>
+</sdf>
