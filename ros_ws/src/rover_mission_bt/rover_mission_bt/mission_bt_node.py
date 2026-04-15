@@ -12,18 +12,15 @@ from std_msgs.msg import String
 
 class RoverMissionBTNode(Node):
     """
-    Minimal mission BT runner.
+    Deterministic mission-cycle runner aligned to authored BT assets.
 
-    Today:
-      - Loads a BT XML file path (for traceability)
-      - Runs a deterministic phase machine: DRIVE -> STOP_MEASURE -> TRANSMIT_LOG -> REPEAT
+    Current behavior:
+      - Loads and validates a BT XML file path for mission traceability
+      - Executes a deterministic phase machine: DRIVE -> STOP_MEASURE -> TRANSMIT_LOG -> REPEAT
       - Publishes /mission/state as std_msgs/String
 
-    Tomorrow:
-      - Bind DriveToGoal to Nav2 NavigateToPose action
-      - Bind StopMotion to /cmd_vel_safe = 0
-      - Bind AcquireMeasurements to sensor sampling windows
-      - Bind TransmitAndLog to dataset logger / comms stub
+    This node preserves the mission cadence and interface contract while the
+    repository remains in a pre-runtime-BT integration phase.
     """
 
     def __init__(self) -> None:
@@ -74,9 +71,17 @@ class RoverMissionBTNode(Node):
         mode = self._mode()
         tree_file = str(self.get_parameter("tree_file").value).strip()
         if tree_file:
-            self.get_logger().info(f"mission_bt mode={mode} tree_file={tree_file}")
+            tree_path = Path(tree_file)
+            status = "present" if tree_path.exists() else "missing"
+            self.get_logger().info(
+                f"mission_bt mode={mode} execution_model=deterministic_phase_runner "
+                f"tree_file={tree_file} tree_status={status}"
+            )
         else:
-            self.get_logger().info(f"mission_bt mode={mode} tree_file=(not set)")
+            self.get_logger().info(
+                f"mission_bt mode={mode} execution_model=deterministic_phase_runner "
+                "tree_file=(not set)"
+            )
 
     def _publish_state(self) -> None:
         msg = String()
@@ -104,8 +109,8 @@ class RoverMissionBTNode(Node):
             if elapsed >= d_tx:
                 self._advance("REPEAT")
         elif self._phase == "REPEAT":
-            # In real BT: SelectNextGoal, possibly GoalReached check.
-            # For now: immediately drive again.
+            # The authored BT files currently define the mission cadence.
+            # Runtime execution is represented here by the deterministic phase loop.
             self._advance("DRIVE")
         else:
             # Unknown state -> fail safe

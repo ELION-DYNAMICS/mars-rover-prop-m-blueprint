@@ -1,0 +1,51 @@
+name: Bug Report
+description: Report a defect with clear reproduction steps and evidence.
+title: "bug: <report>"
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Provide evidence. If it cannot be reproduced, it cannot be fixed.
+  - type: input
+    id: version
+    attributes:
+      label: Version / Commit
+      placeholder: "e.g. a83f2c1"
+    validations:
+      required: true
+  - type: input
+    id: scenario
+    attributes:
+      label: Scenario
+      placeholder: "e.g. mars_flat"
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction steps
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Logs / Evidence
+      placeholder: |
+        run_id:
+        log excerpt:
+        screenshots:

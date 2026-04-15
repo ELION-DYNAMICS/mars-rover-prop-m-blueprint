@@ -7,7 +7,7 @@ from pathlib import Path
 from .bag_record import record_bag
 from .bag_export import export_bag_to_csv
 from .dataset_package import package_dataset
-from .metrics_eval import evaluate_metrics_placeholder
+from .metrics_eval import evaluate_metrics
 
 
 def main() -> None:
@@ -30,8 +30,13 @@ def main() -> None:
     pe.add_argument("--bag", required=True, help="Path to .mcap file or bag directory.")
     pe.add_argument("--out", required=True, help="Output directory for CSV export.")
 
-    pm = sub.add_parser("metrics", help="Generate metrics.json (placeholder today).")
+    pm = sub.add_parser("metrics", help="Generate metrics.json from the packaged dataset evidence.")
     pm.add_argument("--dataset", required=True, help="datasets/<run_id>/ directory.")
+    pm.add_argument(
+        "--non-strict",
+        action="store_true",
+        help="Allow partial metrics output when required artifacts are missing.",
+    )
 
     args = p.parse_args()
 
@@ -56,6 +61,6 @@ def main() -> None:
         raise SystemExit(code)
 
     if args.cmd == "metrics":
-        out = evaluate_metrics_placeholder(Path(args.dataset))
+        out = evaluate_metrics(Path(args.dataset), strict=not args.non_strict)
         print(str(out))
         return

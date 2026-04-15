@@ -100,6 +100,6 @@ jobs:
         with:
           name: colcon-test-logs-${{ matrix.ros_distro }}
           path: |
-            rover_ws/log
-            rover_ws/build/**/Testing
+            ros_ws/log
+            ros_ws/build/**/Testing
           if-no-files-found: ignore

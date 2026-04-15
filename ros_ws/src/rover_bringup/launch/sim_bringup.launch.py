@@ -1,58 +1,69 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, PythonExpression
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     mode = LaunchConfiguration("mode")  # modern | prop_m
 
-    pkg_share = FindPackageShare("rover_bringup")
+    bringup_pkg = FindPackageShare("rover_bringup")
+    mission_pkg = FindPackageShare("rover_mission_bt")
+    description_pkg = FindPackageShare("rover_description")
+    estimation_pkg = FindPackageShare("rover_estimation")
 
-    common_params = PathJoinSubstitution([pkg_share, "params", "common.yaml"])
-    modern_params = PathJoinSubstitution([pkg_share, "params", "modes", "modern.yaml"])
-    prop_params = PathJoinSubstitution([pkg_share, "params", "modes", "prop_m.yaml"])
+    common_params = PathJoinSubstitution([bringup_pkg, "params", "common.yaml"])
+    modern_params = PathJoinSubstitution([bringup_pkg, "params", "modes", "modern.yaml"])
+    prop_params = PathJoinSubstitution([bringup_pkg, "params", "modes", "prop_m.yaml"])
+    description_launch = PathJoinSubstitution([description_pkg, "launch", "description.launch.py"])
+    estimation_launch = PathJoinSubstitution([estimation_pkg, "launch", "ekf.launch.py"])
+    modern_tree = PathJoinSubstitution([mission_pkg, "trees", "modern_cycle.xml"])
+    prop_tree = PathJoinSubstitution([mission_pkg, "trees", "prop_m_cycle.xml"])
 
-    # NOTE: We load both mode files but use them via namespacing or node-specific selection later.
-    # For now, keep it explicit and controlled.
+    tree_file = PythonExpression([
+        '"', prop_tree, '" if "', mode, '" == "prop_m" else "', modern_tree, '"'
+    ])
 
     return LaunchDescription([
         DeclareLaunchArgument("mode", default_value="modern"),
 
-        # Robot State Publisher (URDF is assumed to be provided elsewhere; wire later)
-        Node(
-            package="robot_state_publisher",
-            executable="robot_state_publisher",
-            name="robot_state_publisher",
-            output="screen",
-            parameters=[{"use_sim_time": True}],
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(description_launch),
+            launch_arguments={
+                "use_sim": "true",
+                "use_ros2_control": "true",
+            }.items()
         ),
 
-        # Placeholder core nodes (replace packages/executables with your real ones as they exist)
-        # Control arbitration / safety
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(estimation_launch),
+            launch_arguments={
+                "mode": mode,
+            }.items()
+        ),
+
         Node(
             package="rover_control",
             executable="rover_control_node",
             name="rover_control",
             output="screen",
-            parameters=[common_params, modern_params, prop_params],
+            parameters=[common_params, modern_params, prop_params, {"use_sim_time": True}],
         ),
 
-        # Estimation (EKF)
         Node(
-            package="rover_estimation",
-            executable="rover_estimation_node",
-            name="rover_estimation",
+            package="rover_mission_bt",
+            executable="rover_mission_bt_node",
+            name="rover_mission_bt",
             output="screen",
-            parameters=[common_params, modern_params, prop_params],
-        ),
-
-        # Mission executive
-        Node(
-            package="rover_mission",
-            executable="rover_mission_node",
-            name="rover_mission",
-            output="screen",
-            parameters=[common_params, modern_params, prop_params],
+            parameters=[
+                common_params,
+                modern_params,
+                prop_params,
+                {
+                    "use_sim_time": True,
+                    "tree_file": tree_file,
+                },
+            ],
         ),
     ])

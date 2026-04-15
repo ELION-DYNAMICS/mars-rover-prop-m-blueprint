@@ -1,24 +1,33 @@
 from __future__ import annotations
 
+import importlib.util
 from pathlib import Path
-from typing import Any, Dict
-
-from .utils import write_json
 
 
-def evaluate_metrics_placeholder(dataset_dir: Path) -> Path:
+def _repo_root() -> Path:
+    return Path(__file__).resolve().parents[4]
+
+
+def _load_metrics_module():
+    script_path = _repo_root() / "scripts" / "evaluate_metrics.py"
+    if not script_path.exists():
+        raise FileNotFoundError(f"metrics evaluator script not found: {script_path}")
+
+    spec = importlib.util.spec_from_file_location("rover_metrics_script", script_path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"cannot load metrics evaluator module from {script_path}")
+
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def evaluate_metrics(dataset_dir: Path, *, strict: bool = True) -> Path:
     """
-    Placeholder metrics evaluator.
+    Generate metrics.json using the repository's primary evidence-based evaluator.
 
-    Writes datasets/<run_id>/metrics.json with a deterministic structure.
-    Real MCAP parsing comes next (rosbag2_py or external pipeline).
+    The canonical implementation lives in scripts/evaluate_metrics.py so the CLI,
+    documentation, and batch tooling use the same logic.
     """
-    metrics = {
-        "schema_version": "0.1",
-        "status": "placeholder",
-        "notes": "MCAP parsing not yet integrated in rover_tools. Replace with rosbag2_py-based evaluator.",
-        "metrics": {},
-    }
-    out = dataset_dir / "metrics.json"
-    write_json(out, metrics)
-    return out
+    module = _load_metrics_module()
+    return module.evaluate(Path(dataset_dir), strict=strict)

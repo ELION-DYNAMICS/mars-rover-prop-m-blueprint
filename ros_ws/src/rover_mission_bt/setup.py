@@ -16,8 +16,8 @@ setup(
     ],
     install_requires=["setuptools"],
     zip_safe=True,
-    maintainer="Maintainer",
-    maintainer_email="unknown@example.com",
+    maintainer="Elion Dynamics Engineering",
+    maintainer_email="engineering@elion.com",
     description="Behavior Trees for rover mission cycles (Drive -> Stop/Measure -> Transmit/Log).",
     license="Apache-2.0",
     entry_points={

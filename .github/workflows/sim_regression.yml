@@ -117,5 +117,5 @@ jobs:
           name: sim-regression-${{ matrix.ros_distro }}-${{ matrix.scenario }}
           path: |
             datasets/**
-            rover_ws/log/**
+            ros_ws/log/**
           if-no-files-found: ignore

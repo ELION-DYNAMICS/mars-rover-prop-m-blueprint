@@ -1,0 +1,50 @@
+name: Feature Request
+description: Propose a capability with clear scope and verification criteria.
+title: "feat: <proposal>"
+labels: ["enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Features must be verifiable. If the acceptance criteria are vague, the request is not ready.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem statement
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+    validations:
+      required: true
+  - type: textarea
+    id: interfaces
+    attributes:
+      label: Interface impact
+      placeholder: |
+        Topics:
+        Messages:
+        Frames:
+        QoS:
+  - type: textarea
+    id: vnv
+    attributes:
+      label: Verification plan
+      placeholder: |
+        Unit tests:
+        Integration tests:
+        Scenario runs:
+        Metrics / thresholds:
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+    validations:
+      required: true

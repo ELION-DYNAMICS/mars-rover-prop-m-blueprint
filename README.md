@@ -1,17 +1,17 @@
 # Mars Rover PROP-M Blueprint
 
-Simulation-first, research-grade Mars rover architecture inspired by the Soviet PrOP-M concept - rebuilt with modern robotics standards.
+Simulation-first Mars rover architecture inspired by the Soviet PrOP-M concept and rebuilt as a modern ROS 2 research stack.
 
-This repository contains a complete, reproducible rover stack:
+This repository currently contains an integrated prototype stack with:
 - Mechanical model (URDF/Xacro)
 - Kinematics and dynamics documentation
 - Control architecture (ros2_control)
-- State estimation
-- Navigation stack (Nav2)
-- Mission logic (Behavior Trees)
-- Multi-scenario simulation
+- State estimation bringup
+- Navigation configuration (Nav2)
+- Deterministic mission-cycle execution aligned to BT-authored mission trees
+- Multi-scenario simulation assets
 - Logging + dataset governance
-- CI-backed regression testing
+- Repository CI and regression workflow definitions
 
 ---
 
@@ -40,17 +40,26 @@ Two operational modes:
 
 ## System Architecture
 
-ROS 2 workspace (`rover_ws/`):
+ROS 2 workspace (`ros_ws/`):
 
 - `rover_description` -> Robot model, inertials, transmissions
 - `rover_control` -> Wheel controllers, ros2_control configs
 - `rover_estimation` -> Odometry + state fusion
 - `rover_navigation` -> Nav2 configuration
-- `rover_mission_bt` -> Mission behavior trees
+- `rover_mission_bt` -> Mission-cycle runner and authored mission trees
 - `rover_sim_gazebo` -> Simulation environments
 - `rover_tools` -> Dataset export + metrics
 
 ---
+
+## Current Maturity
+
+This is an early engineering repository, not a finished flight or field stack.
+
+- The simulation/control/navigation path is the strongest implemented surface.
+- Mission execution currently uses a deterministic scheduler aligned to the BT phase model; it is not yet a full runtime tree executor.
+- Dynamics and terramechanics parameters still include first-pass estimates pending calibration.
+- Reproducibility depends on a ROS 2 / Gazebo environment with the declared package set available.
 
 ## Quickstart (Simulation)
 
@@ -81,20 +90,20 @@ ros2 bag record -s mcap --all
 | mars_dunes | Slip + terrain interaction |
 | lander_tether_site | PROP-M tether realism |
 
-All scenarios are regression-tested.
+Scenario assets and regression workflow definitions are included in the repository. Their value depends on the local or CI environment being able to build and run the ROS 2 stack.
 
 ---
 
 ## Reproducibility
 
-Every simulation run produces:
+The intended run artifact set is:
 
 - MCAP log
 - run_metadata.json
 - metrics.json
 
-Runs are schema-validated.
-CI fails if performance thresholds regress.
+Packaged runs are schema-validated.
+Regression thresholds are enforced when the corresponding evaluation pipeline is executed successfully.
 
 ---
 
@@ -129,4 +138,4 @@ v1.0 – Terramechanics + calibrated dynamics
 
 ## Research Intent
 
-_This repository is a technical reconstruction and modernization of early planetary surface mobility concepts, engineered under contemporary robotics standards._
+_This repository is a technical reconstruction and modernization of early planetary surface mobility concepts, implemented as a ROS 2 research prototype with explicit room for calibration and integration hardening._

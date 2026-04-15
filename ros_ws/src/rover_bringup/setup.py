@@ -18,8 +18,8 @@ setup(
     ],
     install_requires=["setuptools"],
     zip_safe=True,
-    maintainer="Maintainer",
-    maintainer_email="unknown@example.com",
+    maintainer="Elion Dynamics Engineering",
+    maintainer_email="engineering@elion.com",
     description="Bringup and mode-switch launch for Mars Rover Prop-M Blueprint.",
     license="Apache-2.0",
 )

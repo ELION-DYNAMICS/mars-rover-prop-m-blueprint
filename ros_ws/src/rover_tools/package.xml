@@ -4,7 +4,7 @@
   <version>0.1.0</version>
   <description>Operations tooling: bag recording/export, metrics evaluation, dataset packaging.</description>
 
-  <maintainer email="unknown@example.com">Maintainer</maintainer>
+  <maintainer email="engineering@elion.com">Elion Dynamics Engineering</maintainer>
   <license>Apache-2.0</license>
 
   <buildtool_depend>ament_python</buildtool_depend>

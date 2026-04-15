@@ -12,8 +12,8 @@ setup(
     ],
     install_requires=["setuptools"],
     zip_safe=True,
-    maintainer="Maintainer",
-    maintainer_email="unknown@example.com",
+    maintainer="Elion Dynamics Engineering",
+    maintainer_email="engineering@elion.com",
     description="Command arbitration and safety shaping: /cmd_vel -> /cmd_vel_safe.",
     license="Apache-2.0",
     entry_points={

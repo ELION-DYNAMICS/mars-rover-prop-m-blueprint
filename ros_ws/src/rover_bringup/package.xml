@@ -4,7 +4,7 @@
   <version>0.1.0</version>
   <description>Bringup and mode-switch launch for Mars Rover Prop-M Blueprint.</description>
 
-  <maintainer email="unknown@example.com">Maintainer</maintainer>
+  <maintainer email="engineering@elion.com">Elion Dynamics Engineering</maintainer>
   <license>Apache-2.0</license>
 
   <buildtool_depend>ament_python</buildtool_depend>
@@ -12,6 +12,11 @@
   <exec_depend>launch</exec_depend>
   <exec_depend>launch_ros</exec_depend>
   <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>rover_description</exec_depend>
+  <exec_depend>rover_control</exec_depend>
+  <exec_depend>rover_estimation</exec_depend>
+  <exec_depend>rover_mission_bt</exec_depend>
+  <exec_depend>rover_navigation</exec_depend>
 
   <!-- Nav2 (optional but expected for modern mode) -->
   <exec_depend>nav2_bringup</exec_depend>

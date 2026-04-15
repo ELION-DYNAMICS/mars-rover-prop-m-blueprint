@@ -15,7 +15,7 @@
         <geometry><box size="0.30 0.22 0.10"/></geometry>
       </collision>
 
-      <!-- Placeholder inertial (replace with CAD-derived) -->
+      <!-- First-pass inertial estimate for simulation bringup; replace with CAD-derived values during dynamics calibration. -->
       <xacro:inertial_box mass="8.0" x="0.30" y="0.22" z="0.10"/>
     </link>
 
