@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.8)
 project(rover_sim_gazebo)
 
+find_package(ament_cmake REQUIRED)
+find_package(gazebo REQUIRED)
+
 add_subdirectory(plugins)
 
 install(DIRECTORY
