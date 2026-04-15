@@ -7,17 +7,20 @@ from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     mode = LaunchConfiguration("mode")  # modern | prop_m
+    world = LaunchConfiguration("world")
 
     bringup_pkg = FindPackageShare("rover_bringup")
     mission_pkg = FindPackageShare("rover_mission_bt")
     description_pkg = FindPackageShare("rover_description")
     estimation_pkg = FindPackageShare("rover_estimation")
+    sim_pkg = FindPackageShare("rover_sim_gazebo")
 
     common_params = PathJoinSubstitution([bringup_pkg, "params", "common.yaml"])
     modern_params = PathJoinSubstitution([bringup_pkg, "params", "modes", "modern.yaml"])
     prop_params = PathJoinSubstitution([bringup_pkg, "params", "modes", "prop_m.yaml"])
     description_launch = PathJoinSubstitution([description_pkg, "launch", "description.launch.py"])
     estimation_launch = PathJoinSubstitution([estimation_pkg, "launch", "ekf.launch.py"])
+    sim_launch = PathJoinSubstitution([sim_pkg, "launch", "sim.launch.py"])
     modern_tree = PathJoinSubstitution([mission_pkg, "trees", "modern_cycle.xml"])
     prop_tree = PathJoinSubstitution([mission_pkg, "trees", "prop_m_cycle.xml"])
 
@@ -27,6 +30,14 @@ def generate_launch_description():
 
     return LaunchDescription([
         DeclareLaunchArgument("mode", default_value="modern"),
+        DeclareLaunchArgument("world", default_value="mars_flat.sdf"),
+
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(sim_launch),
+            launch_arguments={
+                "world": world,
+            }.items()
+        ),
 
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(description_launch),
