@@ -58,9 +58,9 @@
       "description": "Deterministic seed used for simulation randomness. Use 0 for hardware unless you intentionally inject stochasticity."
     },
 
-    "operator": {
+    "operator_id": {
       "type": ["string", "null"],
-      "description": "Optional: operator name/handle for the run."
+      "description": "Optional: operator or run-owner identifier for the dataset."
     },
     "notes": {
       "type": ["string", "null"],

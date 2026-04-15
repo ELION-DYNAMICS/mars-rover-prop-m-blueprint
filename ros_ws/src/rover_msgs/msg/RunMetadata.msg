@@ -30,5 +30,5 @@ string terramechanics_config
 string nav2_profile
 
 # Notes
-string operator
+string operator_id
 string notes
