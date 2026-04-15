@@ -24,7 +24,7 @@ jobs:
 
     env:
       ROS_DISTRO: ${{ matrix.ros_distro }}
-      ROS_WS: rover_ws
+      ROS_WS: ros_ws
       SCENARIO: ${{ matrix.scenario }}
       # determinism for regression
       SEED: "42"
