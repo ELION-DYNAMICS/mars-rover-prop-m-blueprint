@@ -1,0 +1,30 @@
+site_name: Mars Rover Prop-M Blueprint
+site_description: Documentation for the Mars Rover Prop-M Blueprint research prototype
+theme:
+  name: material
+docs_dir: docs
+nav:
+  - Home: 00_overview.md
+  - System Architecture: system_architecture.md
+  - Requirements (PROP-M): 10_requirements_prop-m.md
+  - Hardware:
+      - Mechanical Architecture: 20_hardware/mechanical_architecture.md
+      - Electrical Architecture: 20_hardware/electrical_architecture.md
+      - BOM Matrix: 20_hardware/bom_matrix.md
+  - Models:
+      - Kinematics: 30_models/kinematics.md
+      - Dynamics: 30_models/dynamics.md
+      - Terramechanics: 30_models/terramechanics.md
+  - Control:
+      - Low-Level Control: 40_control/low_level_control.md
+      - State Estimation: 40_control/state_estimation.md
+      - Planning and Autonomy: 40_control/planning_and_autonomy.md
+  - Simulation:
+      - Gazebo: 50_simulation/gazebo.md
+      - PyBullet: 50_simulation/pybullet.md
+      - Webots: 50_simulation/webots.md
+  - ICD: interface_control_document.md
+  - V&V: 60_testing_vnv.md
+  - Datasets: 70_datasets.md
+  - Licensing: 80_licensing.md
+  - References: references.md
