@@ -95,7 +95,15 @@ jobs:
         if: always()
         shell: bash
         run: |
+          if [ ! -f "/opt/ros/${ROS_DISTRO}/setup.bash" ]; then
+            echo "ROS environment not available; skipping test-result summary."
+            exit 0
+          fi
           source /opt/ros/${ROS_DISTRO}/setup.bash
+          if [ ! -d "${ROS_WS}" ]; then
+            echo "Workspace directory ${ROS_WS} not available; skipping test-result summary."
+            exit 0
+          fi
           cd "${ROS_WS}"
           colcon test-result --verbose || true
 
