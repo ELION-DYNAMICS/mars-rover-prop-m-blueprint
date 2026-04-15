@@ -14,7 +14,6 @@ setup(
         (os.path.join("share", package_name, "launch"), glob("launch/*.launch.py")),
         (os.path.join("share", package_name, "params"), glob("params/*.yaml")),
         (os.path.join("share", package_name, "params", "modes"), glob("params/modes/*.yaml")),
-        (os.path.join("share", package_name, "params", "nav2"), glob("params/nav2/*.yaml")),
     ],
     install_requires=["setuptools"],
     zip_safe=True,
