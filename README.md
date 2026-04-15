@@ -58,6 +58,7 @@ This is an early engineering repository, not a finished flight or field stack.
 
 - The simulation/control/navigation path is the strongest implemented surface.
 - Mission execution currently uses a deterministic scheduler aligned to the BT phase model; it is not yet a full runtime tree executor.
+- The hardware bringup path is an explicit placeholder until a validated driver stack exists.
 - Dynamics and terramechanics parameters still include first-pass estimates pending calibration.
 - Reproducibility depends on a ROS 2 / Gazebo environment with the declared package set available.
 
