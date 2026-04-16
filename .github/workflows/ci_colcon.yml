@@ -24,13 +24,14 @@ jobs:
       ROS_DISTRO: ${{ matrix.ros_distro }}
       ROS_WS: ros_ws
       COLCON_SKIP_PACKAGES: rover_sim_gazebo
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup ROS 2
-        uses: ros-tooling/setup-ros@v0.7
+        uses: ros-tooling/setup-ros@0.7.15
         with:
           required-ros-distributions: ${{ matrix.ros_distro }}
 
@@ -118,7 +119,7 @@ jobs:
 
       - name: Upload test logs
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: colcon-test-logs-${{ matrix.ros_distro }}
           path: |
