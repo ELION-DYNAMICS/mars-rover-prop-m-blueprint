@@ -47,7 +47,7 @@ This separation is intentional. It prevents the common failure mode where tuning
   Gazebo worlds, terrain presets, sensor configuration, world plugins. Simulation is treated as an experiment harness, not a demo.
 
 ### Drivers
-- `rover_drivers` (meta-package)
+- `rover_drivers` (umbrella package)
 - `rover_driver_base`  
   Simulation stubs first (IMU, encoders, contacts, motor interface). Hardware drivers replace stubs without changing higher layers.
 
