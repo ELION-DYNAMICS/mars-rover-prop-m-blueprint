@@ -75,10 +75,28 @@ jobs:
         run: |
           source /opt/ros/${ROS_DISTRO}/setup.bash
           cd "${ROS_WS}"
+          set +e
           colcon build \
             --packages-skip ${COLCON_SKIP_PACKAGES} \
             --event-handlers console_direct+ \
             --symlink-install
+          build_status=$?
+          set -e
+
+          if [ "${build_status}" -ne 0 ]; then
+            echo
+            echo "colcon build failed; printing package logs from log/latest_build."
+            if [ -d "log/latest_build" ]; then
+              find log/latest_build -type f \( -name stderr.log -o -name stdout.log \) | sort | while read -r logfile; do
+                echo
+                echo "===== ${logfile} ====="
+                cat "${logfile}" || true
+              done
+            else
+              echo "No log/latest_build directory found."
+            fi
+            exit "${build_status}"
+          fi
 
       - name: Test
         shell: bash
