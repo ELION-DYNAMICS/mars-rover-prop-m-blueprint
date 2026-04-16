@@ -61,15 +61,6 @@ jobs:
             --dependency-types=build_export \
             --dependency-types=test
 
-      - name: Cache colcon build (ccache)
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.ccache
-          key: ccache-${{ runner.os }}-${{ matrix.ros_distro }}-${{ github.sha }}
-          restore-keys: |
-            ccache-${{ runner.os }}-${{ matrix.ros_distro }}-
-
       - name: Build
         shell: bash
         run: |
