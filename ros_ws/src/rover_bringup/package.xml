@@ -17,7 +17,6 @@
   <exec_depend>rover_estimation</exec_depend>
   <exec_depend>rover_mission_bt</exec_depend>
   <exec_depend>rover_navigation</exec_depend>
-  <exec_depend>rover_sim_gazebo</exec_depend>
 
   <!-- Nav2 (optional but expected for modern mode) -->
   <exec_depend>nav2_bringup</exec_depend>
