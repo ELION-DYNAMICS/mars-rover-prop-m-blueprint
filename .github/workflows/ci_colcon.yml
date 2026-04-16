@@ -86,8 +86,8 @@ jobs:
           if [ "${build_status}" -ne 0 ]; then
             echo
             echo "colcon build failed; printing package logs from log/latest_build."
-            if [ -d "log/latest_build" ]; then
-              find log/latest_build -type f \( -name stderr.log -o -name stdout.log \) | sort | while read -r logfile; do
+            if [ -e "log/latest_build" ]; then
+              find -L log/latest_build -type f \( -name stderr.log -o -name stdout.log \) | sort | while read -r logfile; do
                 echo
                 echo "===== ${logfile} ====="
                 cat "${logfile}" || true
