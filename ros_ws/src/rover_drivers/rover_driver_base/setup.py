@@ -14,7 +14,7 @@ setup(
     zip_safe=True,
     maintainer="Elion Dynamics Engineering",
     maintainer_email="engineering@elion.com",
-    description="Base driver layer. Provides simulation stubs and hardware abstraction interfaces.",
+    description="Driver-layer boundary package with simulation bridge nodes and hardware-facing placeholders.",
     license="Apache-2.0",
     entry_points={
         "console_scripts": [

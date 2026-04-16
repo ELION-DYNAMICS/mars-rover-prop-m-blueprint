@@ -23,6 +23,9 @@ class SimContactsNode(Node):
         super().__init__("sim_contacts")
 
         self.declare_parameter("pub_rate_hz", 20.0)
+        self.declare_parameter("left_topic", "/contacts/left")
+        self.declare_parameter("right_topic", "/contacts/right")
+        self.declare_parameter("front_topic", "/contacts/front")
 
         qos = QoSProfile(
             reliability=ReliabilityPolicy.RELIABLE,
@@ -30,14 +33,20 @@ class SimContactsNode(Node):
             depth=10,
         )
 
-        self.pub_left = self.create_publisher(Bool, "/contacts/left", qos)
-        self.pub_right = self.create_publisher(Bool, "/contacts/right", qos)
-        self.pub_front = self.create_publisher(Bool, "/contacts/front", qos)
+        left_topic = str(self.get_parameter("left_topic").value)
+        right_topic = str(self.get_parameter("right_topic").value)
+        front_topic = str(self.get_parameter("front_topic").value)
+
+        self.pub_left = self.create_publisher(Bool, left_topic, qos)
+        self.pub_right = self.create_publisher(Bool, right_topic, qos)
+        self.pub_front = self.create_publisher(Bool, front_topic, qos)
 
         rate = float(self.get_parameter("pub_rate_hz").value)
         self.timer = self.create_timer(1.0 / rate, self._tick)
 
-        self.get_logger().info("sim_contacts publishing /contacts/*")
+        self.get_logger().info(
+            f"sim_contacts publishing {left_topic}, {right_topic}, {front_topic}"
+        )
 
     def _tick(self) -> None:
         msg = Bool()

@@ -2,7 +2,7 @@
 <package format="3">
   <name>rover_driver_base</name>
   <version>0.1.0</version>
-  <description>Base driver layer. Provides simulation stubs and hardware abstraction interfaces.</description>
+  <description>Driver-layer boundary package providing simulation bridge nodes and hardware-facing interface placeholders.</description>
 
   <maintainer email="engineering@elion.com">Elion Dynamics Engineering</maintainer>
   <license>Apache-2.0</license>

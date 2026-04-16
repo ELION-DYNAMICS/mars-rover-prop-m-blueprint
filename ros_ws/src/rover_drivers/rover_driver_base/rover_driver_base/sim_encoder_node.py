@@ -27,11 +27,13 @@ class SimEncoderNode(Node):
         self.declare_parameter("pub_rate_hz", 50.0)
         self.declare_parameter("left_joint", "wheel_left_joint")
         self.declare_parameter("right_joint", "wheel_right_joint")
+        self.declare_parameter("frame_id", "")
 
         topic = str(self.get_parameter("topic").value)
         rate = float(self.get_parameter("pub_rate_hz").value)
         self.left = str(self.get_parameter("left_joint").value)
         self.right = str(self.get_parameter("right_joint").value)
+        self.frame_id = str(self.get_parameter("frame_id").value)
 
         qos = QoSProfile(
             reliability=ReliabilityPolicy.RELIABLE,
@@ -46,6 +48,7 @@ class SimEncoderNode(Node):
     def _tick(self) -> None:
         msg = JointState()
         msg.header.stamp = self.get_clock().now().to_msg()
+        msg.header.frame_id = self.frame_id
         msg.name = [self.left, self.right]
 
         # Stub: no motion

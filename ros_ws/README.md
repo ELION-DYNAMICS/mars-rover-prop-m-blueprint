@@ -49,7 +49,7 @@ This separation is intentional. It prevents the common failure mode where tuning
 ### Drivers
 - `rover_drivers` (umbrella package)
 - `rover_driver_base`  
-  Simulation stubs first (IMU, encoders, contacts, motor interface). Hardware drivers replace stubs without changing higher layers.
+  Driver-layer boundary package. Simulation bridge nodes currently satisfy IMU, encoder, contact, and motor-interface contracts; hardware drivers are expected to replace those bridges later without changing higher layers.
 
 ### Operations / Evidence
 - `rover_tools`  

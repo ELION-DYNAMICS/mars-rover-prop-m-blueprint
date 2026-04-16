@@ -1,1 +1,1 @@
-# rover_driver_base package
+"""Driver-layer boundary package for simulation bridge nodes and future hardware interfaces."""

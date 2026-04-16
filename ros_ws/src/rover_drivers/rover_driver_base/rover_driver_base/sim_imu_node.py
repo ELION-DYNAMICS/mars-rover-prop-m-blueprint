@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-import math
-import time
-
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy
@@ -35,9 +32,11 @@ class SimImuNode(Node):
         self.declare_parameter("topic", "/imu/data")
         self.declare_parameter("pub_rate_hz", 100.0)
         self.declare_parameter("yaw_rate_bias_rps", 0.0)
+        self.declare_parameter("frame_id", "imu_link")
 
         topic = str(self.get_parameter("topic").value)
         rate = float(self.get_parameter("pub_rate_hz").value)
+        self.frame_id = str(self.get_parameter("frame_id").value)
 
         qos = QoSProfile(
             reliability=ReliabilityPolicy.RELIABLE,
@@ -48,12 +47,14 @@ class SimImuNode(Node):
         self.pub = self.create_publisher(Imu, topic, qos)
         self.timer = self.create_timer(1.0 / rate, self._tick)
 
-        self.get_logger().info(f"sim_imu publishing {topic} at {rate:.1f} Hz")
+        self.get_logger().info(
+            f"sim_imu publishing {topic} at {rate:.1f} Hz using frame_id={self.frame_id}"
+        )
 
     def _tick(self) -> None:
         msg = Imu()
         msg.header.stamp = now_msg(self)
-        msg.header.frame_id = "imu_link"
+        msg.header.frame_id = self.frame_id
 
         # Orientation unknown in stub -> leave covariance large if used later
         msg.orientation_covariance[0] = -1.0  # convention: orientation not provided
