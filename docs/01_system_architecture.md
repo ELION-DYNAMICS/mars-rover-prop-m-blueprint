@@ -14,7 +14,7 @@ This document defines the runtime architecture for:
 ### Core Nodes
 - `/rover_bringup` _(launch + parameter wiring)_
 - `/rover_description` _(URDF/xacro, TF tree)_
-- `/rover_drivers/*` _(hardware drivers OR sim bridges)_
+- `/rover_drivers/*` _(driver-layer packages and sim bridges)_
 - `/rover_control` _(controllers, cmd mux, safety)_
 - `/rover_estimation` _(EKF / robot_localization)_
 - `/rover_navigation` _(Nav2 stack + costmaps)_
@@ -83,7 +83,7 @@ All topics -> rosbag _(MCAP)_ -> `export_bag.py` -> `datasets/` -> `evaluate_met
 ## 4) Control Hierarchy _(Who Commands Whom)_
 
 ### Level 3: Mission Executive
-- Mission BT / state machine decides *what to do next*
+- Mission scheduler / authored BT phase model decides *what to do next*
 - Issues high-level goals and mode switches
 
 ### Level 2: Navigation
@@ -131,9 +131,8 @@ All topics -> rosbag _(MCAP)_ -> `export_bag.py` -> `datasets/` -> `evaluate_met
 - Safety is stricter _(E-stop, watchdog)_
 
 **HW-specific Nodes**
-- `rover_drivers_motor`
-- `rover_drivers_imu`
-- `rover_drivers_contacts`
+- future hardware-driver packages replacing the current driver-base simulation bridges
+- timing, health, and safety interfaces validated against the target platform
 
 ---
 

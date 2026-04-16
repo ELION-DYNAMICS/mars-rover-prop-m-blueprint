@@ -95,62 +95,63 @@ From `ros_ws/`:
 source /opt/ros/humble/setup.bash
 colcon build --symlink-install
 source install/setup.bash
+```
 
 If you are running Gazebo, ensure the appropriate Gazebo ROS packages are installed for your environment.
 
-⸻
+---
 
-6. Run (Typical Simulation Bringup)
+## 6. Run (Typical Simulation Bringup)
 
 A minimal bringup sequence is:
-	1.	Launch simulation world and spawn rover
-	2.	Start drivers (sim stubs or sim bridges)
-	3.	Start control shaping (rover_control)
-	4.	Start estimation (when available)
-	5.	Start navigation (Nav2)
-	6.	Start mission cycle (BT)
+1. Launch simulation world and spawn rover
+2. Start drivers (sim stubs or sim bridges)
+3. Start control shaping (`rover_control`)
+4. Start estimation (when available)
+5. Start navigation (Nav2)
+6. Start mission cycle
 
 This workspace is structured so the above becomes a single bringup launch once all node implementations are present.
 
-⸻
+---
 
-7. Datasets and Reproducibility
+## 7. Datasets and Reproducibility
 
 A run is only useful if it is reproducible.
 
 Rules:
-	•	Datasets are immutable once packaged under /datasets/<run_id>/
-	•	Each dataset must include run_metadata.json that validates against datasets/schemas/run_metadata.schema.json
-	•	Any derived artifacts (plots, calibration fits, reports) belong under analysis/ or calibration outputs—not inside raw datasets
+- Datasets are immutable once packaged under `/datasets/<run_id>/`
+- Each dataset must include `run_metadata.json` that validates against `datasets/schemas/run_metadata.schema.json`
+- Any derived artifacts (plots, calibration fits, reports) belong under analysis or calibration outputs, not inside raw datasets
 
 When in doubt: treat logs as evidence. Evidence cannot be edited.
 
-⸻
+---
 
-8. Engineering Standards (Non-Negotiable)
-	•	Determinism: If a run cannot be repeated with the same commit/config/seed, it is not acceptable for calibration or regression.
-	•	Traceability: Every parameter set and output must cite its dataset(s).
-	•	Separation of concerns: navigation is not control, mission logic is not tuning, drivers are not estimators.
-	•	Fail loudly: missing topics, invalid metadata, stale commands—these should stop or degrade safely, not “keep going.”
+## 8. Engineering Standards (Non-Negotiable)
+- Determinism: If a run cannot be repeated with the same commit/config/seed, it is not acceptable for calibration or regression.
+- Traceability: Every parameter set and output must cite its dataset(s).
+- Separation of concerns: navigation is not control, mission logic is not tuning, drivers are not estimators.
+- Fail loudly: missing topics, invalid metadata, stale commands should stop or degrade safely, not "keep going."
 
 Confidence comes from reproducibility, not visual plausibility.
 
-⸻
+---
 
-9. Where to Start
+## 9. Where to Start
 
 If you are new to the repository:
-	1.	Confirm the URDF publishes correct frames (rover_description)
-	2.	Confirm command shaping works (rover_control: /cmd_vel → /cmd_vel_safe)
-	3.	Record a minimal bag and package it (rover_tools)
-	4.	Only then add sensor realism, terrain complexity, and autonomy sophistication
+1. Confirm the URDF publishes correct frames (`rover_description`)
+2. Confirm command shaping works (`rover_control`: `/cmd_vel` -> `/cmd_vel_safe`)
+3. Record a minimal bag and package it (`rover_tools`)
+4. Only then add sensor realism, terrain complexity, and autonomy sophistication
 
 Skipping steps produces impressive videos and useless engineering.
 
-⸻
+---
 
-10. Roadmap (Near Term)
-	•	Wire Gazebo sensor plugins in rover_description/urdf/rover_gazebo.xacro (IMU, lidar) to feed Nav2 and estimation
-	•	Implement rover_estimation (EKF publishing /odometry/filtered + TF)
-	•	Implement real metrics evaluation over MCAP (slip, dwell times, phase durations)
-	•	Enable CI regression: fixed worlds + deterministic runs + acceptance checks
+## 10. Roadmap (Near Term)
+- Wire Gazebo sensor plugins in `rover_description/urdf/rover_gazebo.xacro` (IMU, lidar) to feed Nav2 and estimation
+- Extend `rover_estimation` from bringup toward a stronger filtered odometry path
+- Implement real metrics evaluation over MCAP (slip, dwell times, phase durations)
+- Add a dedicated simulation-capable regression workflow with fixed worlds and acceptance checks

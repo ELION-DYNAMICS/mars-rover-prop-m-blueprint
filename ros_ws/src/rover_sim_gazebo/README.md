@@ -22,4 +22,4 @@ Policy:
 This package is used by:
 - rover_bringup (sim mode)
 - calibration experiments (E01–E04)
-- sim regression CI
+- dedicated simulation workflows and local regression runs
